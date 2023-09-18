@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-        stage("deploy artifact"){
+        stage("deploy artifact on to kubernetes"){
             steps{
                 script{
                     sshPublisher(publishers: 
