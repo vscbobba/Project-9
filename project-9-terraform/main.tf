@@ -105,7 +105,7 @@ resource "aws_instance" "ansible_docker" {
      subnet_id = aws_subnet.subnet-9.id
      user_data = file("ansible_docker_data.tpl")
      ami = var.ami[0]
-     instance_type = var.instance_type[0]
+     instance_type = var.instance_type[2]
      tags = {
           Name = "docker"
          }

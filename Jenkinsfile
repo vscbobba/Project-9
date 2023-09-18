@@ -45,7 +45,7 @@ pipeline {
                     [sshPublisherDesc(configName: 'ansible', 
                     transfers: 
                     [sshTransfer(cleanRemote: false, excludes: '', 
-                    execCommand: 'ansible-playbook /tmp/Ansible/deploy-to-docker.yml -i /home/ansadmin/hosts',
+                    execCommand: 'ansible-playbook /tmp/Ansible/deploy-to-kubernetes.yml -i /home/ansadmin/hosts',
                     execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, 
                     patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', 
                     sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])

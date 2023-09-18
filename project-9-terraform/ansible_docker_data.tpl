@@ -19,9 +19,18 @@ sudo apt update -y
 sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+apt-get update && sudo apt-get install -y curl wget virtualbox
 apt-cache policy docker-ce
 sudo apt install docker-ce -y
 sudo chmod 777 /var/run/docker.sock
 sudo apt install python3-pip -y
 sudo pip install docker-py
 usermod -a -G docker ansadmin
+apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+apt-get update
+apt-get install -y kubectl
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+usermod -aG docker $USER && newgrp docker
