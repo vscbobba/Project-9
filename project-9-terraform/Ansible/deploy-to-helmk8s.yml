@@ -1,0 +1,34 @@
+---
+- name: "get the artifact and deploy on to docker"
+  hosts: docker      #K8s cluster with helm installed here#
+  become: yes
+  tasks:
+    - name: "download artifact from nexus"
+      shell: 'curl -u admin:admin123 -L -X GET "http://20.0.1.71:8081/service/rest/v1/search/assets/download?sort=version&repository=Project-2&maven.groupId=com.mydevopslab&maven.artifactId=MyDevOpsLab&maven.extension=war" -H "accept: application/json" --output /home/ansadmin/latest.war'
+      args:
+        chdir: /home/ansadmin
+  
+    - name: create Dockerfile with content
+      copy:
+         dest: /home/ansadmin/Dockerfile
+         content: |
+                FROM tomcat:latest
+                LABEL Author = "Chowdary"
+                ADD ./latest.war /usr/local/tomcat/webapps
+                RUN chmod +x $CATALINA_HOME/bin
+                EXPOSE 8080
+                CMD ["catalina.sh","run"]
+
+    - name: build an image
+      docker_image:
+           name: devopslab-image
+           path : /home/ansadmin
+           force: yes
+           state: present
+
+    - name: change image name
+      command: sed -i 's/repository:.*/repository: devopslab-image/g' values.yaml  #replace image name in values.yml with our image
+                                                                                   # replace tag name also if needed
+    - name: create deployment
+      command: helm install bobbascloud devopslab   #inside devopslab folder, we have helm files(template, values etc)
+                                                    #bobbascloud is deployment name in k8s

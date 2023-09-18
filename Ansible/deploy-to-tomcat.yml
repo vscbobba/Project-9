@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: "download artifact from nexus"
+      shell: 'curl -u admin:admin123 -L -X GET "http://20.0.1.89:8081/service/rest/v1/search/assets/download?sort=version&repository=mylab-release&maven.groupId=com.mydevopslab&maven.artifactId=MyDevOpsLab&maven.extension=war" -H "accept: application/json" --output /home/ansadmin/latest.war'
+      args:
+        chdir: /home/ansadmin
+
+- name: Deploy the latest war file to apache tomcat
+  hosts: tomcat
+  become: true
+  tasks:
+     - name: "deploy to webserver"
+       copy:
+         src: "{{ item }}"
+         dest: "/opt/apache-tomcat-9.0.40/webapps"
+         owner: tomcat
+         group: tomcat
+         mode: u+rwx,g+rwx,o-rwx
+       with_fileglob:
+             - "/home/ansadmin/*.war"
+
+
