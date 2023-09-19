@@ -3,10 +3,10 @@ kind: Service
 metadata:
     name: devopslab-service
     labels:
-        app: regapp
+        app: tomcat
     spec:
        selector:
-         app: regapp
+         app: tomcat
 
        ports:
         - port: 8080

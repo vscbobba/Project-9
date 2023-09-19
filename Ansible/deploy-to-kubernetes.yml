@@ -1,13 +1,49 @@
 ---
-- hosts: kubernetes
+- name: "get the artifact and deploy on to docker"
+  hosts: minikube
   become: yes
-  #user: root
   tasks:
-    - name: deploy regapp on kubernetes
-      command: kubectl apply -f regapp-deployment.yml
+    - name: "download artifact from nexus"
+      shell: 'curl -u admin:admin123 -L -X GET "http://20.0.1.132:8081/service/rest/v1/search/assets/download?sort=version&repository=Project-2&maven.groupId=com.mydevopslab&maven.artifactId=MyDevOpsLab&maven.extension=war" -H "accept: application/json" --output /home/ansadmin/latest.war'
+      args:
+        chdir: /home/ansadmin
+  
+    - name: create Dockerfile with content
+      copy:
+         dest: /home/ansadmin/Dockerfile
+         content: |
+                FROM tomcat:latest
+                LABEL Author = "Chowdary"
+                ADD ./latest.war /usr/local/tomcat/webapps
+                RUN chmod +x $CATALINA_HOME/bin
+                EXPOSE 8080
+                CMD ["catalina.sh","run"]
+
+    - name: build an image
+      docker_image:
+           name: devopslab-image
+           path : /home/ansadmin
+           force: yes
+           state: present
+    - name: tag docker image
+      command: docker image tag devopslab-image:latest chowdarybvsn/devopslab-image:latest
+
+    - name: Log in to Docker Hub
+      docker_login:
+        username: chowdarybvsn@gmail.com
+        password: Docker@2023
+        registry_url: docker.io
+
+    - name: Push Docker Image
+      docker_image:
+        name: chowdarybvsn/devopslab-image:latest
+        push: yes
+      
+    - name: deploy tomcat on kubernetes
+      command: kubectl apply -f tomcat-deployment.yml
 
     - name: create service for regapp
-      command: kubectl apply -f regapp-service.yml
+      command: kubectl apply -f tomcat-service.yml
 
-    - name: update deployment with new pods if image updated in docker hub
-      command: kubectl rollout restart deployment.apps/jabirdocker-regapp
+    #- name: update deployment with new pods if image updated in docker hub
+    #  command: kubectl rollout restart deployment.apps/jabirdocker-regapp

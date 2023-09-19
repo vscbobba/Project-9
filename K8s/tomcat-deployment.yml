@@ -3,21 +3,21 @@ kind: Deployment
 metadata:
       name: devopslab
       labels:
-        app: regapp
+        app: tomcat
 spec:
     replicas: 3
     selector:
         matchLabels:
-          app: regapp
+          app: tomcat
 
     template:
         metadata:
           labels:
-            app: regapp
+            app: tomcat
         spec:
           containers:
-          - name: regapp
-            image: devopslab-image:latest
+          - name: tomcat
+            image: chowdarybvsn/devopslab-image:latest
             imagePullPolicy: Always
             ports:
             - containerPort: 8080

@@ -99,14 +99,27 @@ resource "aws_instance" "ansible_manager" {
         }
 }
 
-resource "aws_instance" "ansible_docker" {
+resource "aws_instance" "ansible_minikube" {
      key_name = aws_key_pair.mykey.id
      vpc_security_group_ids = [aws_security_group.mysg.id]
      subnet_id = aws_subnet.subnet-9.id
-     user_data = file("ansible_docker_data.tpl")
+     user_data = file("ansible_minikube_data.tpl")
      ami = var.ami[0]
      instance_type = var.instance_type[2]
-     tags = {
-          Name = "docker"
+     root_block_device {
+            volume_size = 10
          }
+     tags = {
+          Name = "minikube"
+         }
+    provisioner "file" {
+        source = "/home/venkat/DEVOPS/Project-9/K8s"
+        destination = "/tmp"
+       }
+        connection {
+          type        = "ssh"
+          user        = "ubuntu"             # Replace with your SSH user
+          private_key = file("~/.ssh/id_ed25519")  # Replace with your private key path
+          host  = self.public_ip
+        }
 }

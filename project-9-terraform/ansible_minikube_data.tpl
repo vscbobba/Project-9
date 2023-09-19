@@ -12,19 +12,19 @@ echo 'ubuntu     ALL=(ALL)      NOPASSWD: ALL' | sudo tee -a /etc/sudoers
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 sed -i 's/^StrictHostKeyChecking.*/StrictHostKeyChecking no/' /etc/ssh/ssh_config
 echo 'ClientAliveInterval 60' | sudo tee --append /etc/ssh/sshd_config
-sudo service sshd restart
+service sshd restart
 
-sudo apt-get remove docker docker-engine docker.io containerd runc
-sudo apt update -y
-sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+apt-get remove docker docker-engine docker.io containerd runc
+apt update -y
+apt install apt-transport-https ca-certificates curl software-properties-common -y
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt-get update && sudo apt-get install -y curl wget virtualbox
 apt-cache policy docker-ce
-sudo apt install docker-ce -y
-sudo chmod 777 /var/run/docker.sock
-sudo apt install python3-pip -y
-sudo pip install docker-py
+apt install docker-ce -y
+chmod 777 /var/run/docker.sock
+apt install python3-pip -y
+pip install docker-py
 usermod -a -G docker ansadmin
 apt-get update && sudo apt-get install -y apt-transport-https
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
