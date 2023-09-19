@@ -4,7 +4,7 @@
   become: yes
   tasks:
     - name: "download artifact from nexus"
-      shell: 'curl -u admin:admin123 -L -X GET "http://20.0.1.8:8081/service/rest/v1/search/assets/download?sort=version&repository=Project-2&maven.groupId=com.mydevopslab&maven.artifactId=MyDevOpsLab&maven.extension=war" -H "accept: application/json" --output /home/ansadmin/latest.war'
+      shell: 'curl -u admin:admin123 -L -X GET "http://20.0.1.8:8081/service/rest/v1/search/assets/download?sort=version&repository=Project-9&maven.groupId=com.mydevopslab&maven.artifactId=MyDevOpsLab&maven.extension=war" -H "accept: application/json" --output /home/ansadmin/latest.war'
       args:
         chdir: /home/ansadmin
   
@@ -38,11 +38,15 @@
       docker_image:
         name: chowdarybvsn/devopslab-image:latest
         push: yes
-      
+    
     - name: deploy tomcat on kubernetes
+      environment:
+        KUBECONFIG: /home/ansadmin/.kube/config 
       command: kubectl apply -f tomcat-deployment.yml
 
     - name: create service for regapp
+      environment:
+        KUBECONFIG: /home/ansadmin/.kube/config
       command: kubectl apply -f tomcat-service.yml
 
     #- name: update deployment with new pods if image updated in docker hub
